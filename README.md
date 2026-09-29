@@ -70,6 +70,20 @@ and click Run above `fees_august_15`. The extension caps each query at 25 GB
 billed by default; raise Maximum Bytes Billed on the connection for windows
 wider than a week.
 
+## The live demo at Meridian
+
+Two prompts in Claude Code, started in this folder.
+
+> What were network fees on August 15, 2026?
+
+Claude reads `fees.malloy`, picks `fees_xlm`, runs it through `run_malloy.py`,
+and answers about 4,565 XLM with the measure's comment quoted. No SQL.
+
+> Now answer the same question with raw SQL against the BigQuery table, ignoring the Malloy file.
+
+Claude writes `SUM(fee_charged)` and answers about 9,130 XLM. Same model, same
+table, same question. The only difference is what it was told to use.
+
 ## What this repo does not do
 
 - **No gated access.** `ask.py` denies SQL by construction, but nothing stops
