@@ -20,5 +20,4 @@ ANTHROPIC_API_KEY exported. Screenshots of every result as backup slides.
 4. **Say the line.** "The only difference is which tool it was handed. This
    repo is public. The table is public. You can run this tonight."
 
-Fallback if wifi fails: `fees_local.malloy` in VS Code, blocks 2 and 5,
-3,200 then 1,100. Same story on ten rows.
+Fallback if wifi fails: the screenshots of both terminal runs.

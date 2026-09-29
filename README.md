@@ -23,18 +23,7 @@ exactly twice too high, formatted nicely, with no error.
 | `fees.malloy` | The semantic layer. One source, four measures, two views, two named queries. The comments are the guidance an LLM reads. |
 | `ask.py` | Claude with **one tool: run a Malloy query**. No SQL tool exists. |
 | `ask_raw.py` | Claude with **one tool: run SQL**, and a schema of names and types. The contrast case. |
-| `fees_local.malloy` | The same idea on a ten-row CSV with DuckDB. Runs with no cloud account. |
-| `data/` | The ten-row dummy tables from the talk. |
 | `CLAUDE.md` | The guidance layer, as a file Claude Code reads automatically. |
-
-## Run it offline, five minutes
-
-1. Install [VS Code](https://code.visualstudio.com) and the **Malloy** extension.
-2. Clone this repo and open the folder.
-3. Open `fees_local.malloy`. Click the grey **Run** link above the first block.
-
-Block 2 returns 3,200. Block 5 returns 1,100. The difference is one `join_one`
-declaration. No account, no cloud, no cost.
 
 ## Run it on the real table
 
@@ -76,8 +65,6 @@ wider than a week.
 
 ## Credits
 
-Export-to-DuckDB pattern from
-[stellar-shoestring-analytics](https://github.com/sydneynotthecity/stellar-shoestring-analytics).
 Public Stellar data from [Hubble](https://developers.stellar.org/docs/data/analytics/hubble)
 and [stellar-dbt-public](https://github.com/stellar/stellar-dbt-public).
 
