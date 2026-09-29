@@ -1,0 +1,5 @@
+txn_hash,day,successful,fee_charged,max_fee
+aa1,2026-06-01,true,100,100
+bb2,2026-06-11,true,500,1000
+cc3,2026-06-13,false,300,500
+dd4,2026-06-21,true,200,500

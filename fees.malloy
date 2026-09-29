@@ -1,0 +1,54 @@
+// Talk Data to Me — a semantic layer on ONE public Stellar table.
+//
+// The table is one row per OPERATION. Fees are charged per TRANSACTION and
+// the transaction's fee is copied onto every one of its operation rows.
+// Nothing in the schema says so. This file does.
+//
+// Needs: gcloud auth application-default login (billing project = your own).
+// Every query should filter closed_at to a day or two. The table is large.
+
+source: operations is bigquery.table('crypto-stellar.crypto_stellar_dbt.enriched_history_operations') extend {
+  primary_key: op_id
+
+  dimension:
+    close_day is closed_at.day
+
+  measure:
+    # Network fees in XLM. fee_charged is the TRANSACTION fee repeated on every
+    # operation row, so each row carries its share (fee / ops in the txn).
+    # Failed transactions still pay. Stroops -> XLM is / 10,000,000.
+    fees_xlm is sum(fee_charged / txn_operation_count) / 10000000
+
+    # Distinct transactions. count() would count operation rows instead.
+    txn_count is count(transaction_hash)
+
+    # Operation rows. The grain of this table.
+    op_count is count()
+
+    # Average fee per transaction, in XLM.
+    fee_per_txn_xlm is fees_xlm / txn_count
+
+  # Fees by day. The question most people are asking.
+  view: daily_fees is {
+    group_by: close_day
+    aggregate: fees_xlm, txn_count, op_count
+    order_by: close_day
+  }
+
+  # Fees split by operation type.
+  view: fees_by_type is {
+    group_by: type_string
+    aggregate: fees_xlm, op_count
+    order_by: fees_xlm desc
+  }
+}
+
+// Named queries the agent can run directly.
+query: fees_june_15 is operations -> {
+  where: closed_at ? @2026-06-15
+  aggregate: fees_xlm, txn_count, op_count
+}
+
+query: daily_fees_june is operations -> daily_fees + {
+  where: closed_at ? @2026-06
+}
