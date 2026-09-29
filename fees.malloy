@@ -45,7 +45,7 @@ source: operations is bigquery.table('crypto-stellar.crypto_stellar_dbt.enriched
 
 // Named queries the agent can run directly.
 query: fees_june_15 is operations -> {
-  where: closed_at ? @2026-06-15
+  where: closed_at ? @2026-08-08
   aggregate: fees_xlm, txn_count, op_count
 }
 
@@ -53,5 +53,5 @@ query: fees_june_15 is operations -> {
 // connections at 25 GB billed by default, and a month of this view is ~32 GB.
 // Raise "Maximum Bytes Billed" on the connection if you want wider windows.
 query: daily_fees_week is operations -> daily_fees + {
-  where: closed_at ? @2026-06-09 to @2026-06-16
+  where: closed_at ? @2026-08-01 to @2026-08-07
 }
