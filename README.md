@@ -22,8 +22,6 @@ exactly twice too high, formatted nicely, with no error.
 |---|---|
 | `fees.malloy` | The semantic layer. One source, four measures, two views, two named queries. The comments are the guidance an LLM reads. |
 | `run_malloy.py` | Runs one Malloy query on BigQuery and prints rows plus the generated SQL. What Claude Code calls. |
-| `ask.py` | Claude with **one tool: run a Malloy query**. No SQL tool exists. Needs an API key. |
-| `ask_raw.py` | Claude with **one tool: run SQL**, and a schema of names and types. The contrast case. Needs an API key. |
 | `CLAUDE.md` | The guidance layer, as a file Claude Code reads automatically. |
 
 ## Ask Claude Code, no API key
@@ -50,29 +48,6 @@ Claude reads `CLAUDE.md`, picks `fees_xlm` from `fees.malloy`, runs it through
 Then ask: *Now answer with raw SQL against the BigQuery table, ignoring the Malloy file.*
 It writes `SUM(fee_charged)` and returns about twice the number.
 
-## Scripted version, needs an Anthropic API key
-
-From the folder set up above, with the environment active:
-
-```bash
-export ANTHROPIC_API_KEY=...
-python ask.py     "What were network fees on August 15, 2026?"
-python ask_raw.py "What were network fees on August 15, 2026?"
-```
-
-`ask.py` prints the Malloy query the model chose and the answer.
-`ask_raw.py` prints the SQL the model wrote and the answer. Same model, same
-question, same table. The only difference is which tool it was handed.
-
-Each run scans about one day of operations. Keep the `where:` on `closed_at`.
-`ask_raw.py` caps each query at 2 TB billed (`BQ_MAX_BYTES` to change).
-
-To use the model file in VS Code instead, add a BigQuery connection named
-`bigquery` in the Malloy panel with your billing project, open `fees.malloy`,
-and click Run above `fees_august_15`. The extension caps each query at 25 GB
-billed by default; raise Maximum Bytes Billed on the connection for windows
-wider than a week.
-
 ## The live demo at Meridian
 
 Two prompts in Claude Code, started in this folder.
@@ -89,9 +64,9 @@ table, same question. The only difference is what it was told to use.
 
 ## What this repo does not do
 
-- **No gated access.** `ask.py` denies SQL by construction, but nothing stops
-  someone from running `ask_raw.py`. In production the gate is the tool list
-  the agent is given, enforced outside the model.
+- **No hard gate.** Claude Code avoids SQL here because `CLAUDE.md` asks it
+  to; it still has a shell. In production the gate is the tool list the agent
+  is given, enforced outside the model, so a SQL tool does not exist at all.
 - **No evals.** A prompt set and a judge that grade the agent's answers
   against known numbers. That is the step that catches drift.
 - **No USD.** There is no public XLM price table, so fees stay in XLM.

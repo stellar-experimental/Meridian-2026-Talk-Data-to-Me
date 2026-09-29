@@ -1,3 +1,2 @@
-anthropic>=1.9
 malloy>=2024.1096
 google-cloud-bigquery
