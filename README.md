@@ -21,11 +21,29 @@ exactly twice too high, formatted nicely, with no error.
 | File | What it is |
 |---|---|
 | `fees.malloy` | The semantic layer. One source, four measures, two views, two named queries. The comments are the guidance an LLM reads. |
-| `ask.py` | Claude with **one tool: run a Malloy query**. No SQL tool exists. |
-| `ask_raw.py` | Claude with **one tool: run SQL**, and a schema of names and types. The contrast case. |
+| `run_malloy.py` | Runs one Malloy query on BigQuery and prints rows plus the generated SQL. What Claude Code calls. |
+| `ask.py` | Claude with **one tool: run a Malloy query**. No SQL tool exists. Needs an API key. |
+| `ask_raw.py` | Claude with **one tool: run SQL**, and a schema of names and types. The contrast case. Needs an API key. |
 | `CLAUDE.md` | The guidance layer, as a file Claude Code reads automatically. |
 
-## Run it on the real table
+## Ask Claude Code, no API key
+
+```bash
+gcloud auth application-default login
+gcloud config set project <your-billing-project>
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+claude
+```
+
+Then ask: *What were network fees on August 15, 2026?*
+Claude reads `CLAUDE.md`, picks `fees_xlm` from `fees.malloy`, runs it through
+`run_malloy.py`, and answers. It writes no SQL.
+
+Then ask: *Now answer with raw SQL against the BigQuery table, ignoring the Malloy file.*
+It writes `SUM(fee_charged)` and returns about twice the number.
+
+## Scripted version, needs an Anthropic API key
 
 ```bash
 gcloud auth application-default login
