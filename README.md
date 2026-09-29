@@ -29,12 +29,19 @@ exactly twice too high, formatted nicely, with no error.
 ## Ask Claude Code, no API key
 
 ```bash
+git clone https://github.com/stellar-experimental/Meridian-2026-Talk-Data-to-Me.git
+cd Meridian-2026-Talk-Data-to-Me
 gcloud auth application-default login
 gcloud config set project <your-billing-project>
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 claude
 ```
+
+The billing project is any Google Cloud project you belong to. If you have
+none, create one in the console; no billing account is needed for these
+amounts. The data itself is public and read from `crypto-stellar`; your
+project only pays for the bytes your queries scan.
 
 Then ask: *What were network fees on August 15, 2026?*
 Claude reads `CLAUDE.md`, picks `fees_xlm` from `fees.malloy`, runs it through
@@ -45,16 +52,12 @@ It writes `SUM(fee_charged)` and returns about twice the number.
 
 ## Scripted version, needs an Anthropic API key
 
+From the folder set up above, with the environment active:
+
 ```bash
-gcloud auth application-default login
-gcloud config set project <your-billing-project>
-
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
 export ANTHROPIC_API_KEY=...
-
-python ask.py     "What were network fees on June 15, 2026?"
-python ask_raw.py "What were network fees on June 15, 2026?"
+python ask.py     "What were network fees on August 15, 2026?"
+python ask_raw.py "What were network fees on August 15, 2026?"
 ```
 
 `ask.py` prints the Malloy query the model chose and the answer.
