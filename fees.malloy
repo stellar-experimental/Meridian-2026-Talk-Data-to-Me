@@ -49,6 +49,9 @@ query: fees_june_15 is operations -> {
   aggregate: fees_xlm, txn_count, op_count
 }
 
-query: daily_fees_june is operations -> daily_fees + {
-  where: closed_at ? @2026-06
+// One week, not a month: the Malloy VS Code extension caps BigQuery
+// connections at 25 GB billed by default, and a month of this view is ~32 GB.
+// Raise "Maximum Bytes Billed" on the connection if you want wider windows.
+query: daily_fees_week is operations -> daily_fees + {
+  where: closed_at ? @2026-06-09 to @2026-06-16
 }

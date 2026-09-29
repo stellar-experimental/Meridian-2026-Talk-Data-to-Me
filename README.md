@@ -59,7 +59,9 @@ Each run scans about one day of operations. Keep the `where:` on `closed_at`.
 
 To use the model file in VS Code instead, add a BigQuery connection named
 `bigquery` in the Malloy panel with your billing project, open `fees.malloy`,
-and click Run above `fees_june_15`.
+and click Run above `fees_june_15`. The extension caps each query at 25 GB
+billed by default; raise Maximum Bytes Billed on the connection for windows
+wider than a week.
 
 ## What this repo does not do
 
