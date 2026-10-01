@@ -11,6 +11,9 @@ source: operations is bigquery.table('crypto-stellar.crypto_stellar_dbt.enriched
   primary_key: op_id
 
   dimension:
+    # Day the ledger closed. Filter closed_at with ONE literal per period, no range:
+    # ? @2026-08-15 (a day), ? @2026-08 (a month), ? @2026-Q3, ? @2026.
+    # `to` EXCLUDES its end date: Aug 10 through Aug 20 is ? @2026-08-10 to @2026-08-21.
     close_day is closed_at.day
 
   measure:
@@ -50,9 +53,8 @@ query: fees_august_15 is operations -> {
   aggregate: fees_xlm, txn_count, op_count
 }
 
-// One week, not a month: the Malloy VS Code extension caps BigQuery
-// connections at 25 GB billed by default, and a month of this view is ~32 GB.
-// Raise "Maximum Bytes Billed" on the connection if you want wider windows.
+// One week so it runs from the VS Code extension, which caps BigQuery at
+// 25 GB billed by default. run_malloy.py has no cap; whole months are fine there.
 query: daily_fees_week is operations -> daily_fees + {
-  where: closed_at ? @2026-08-01 to @2026-08-08
+  where: closed_at ? @2026-08-01 to @2026-08-08  // Aug 1-7; `to` excludes Aug 8
 }

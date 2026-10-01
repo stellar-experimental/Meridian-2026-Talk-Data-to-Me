@@ -16,9 +16,26 @@ read it directly; anything else, paste it into the system prompt.
        .venv/bin/python run_malloy.py "run: operations -> { where: closed_at ? @2026-08-15; aggregate: fees_xlm }"
 
    Always include a `where:` on `closed_at`. The table is large.
+   Whole months work through `run_malloy.py`. Don't split a query into
+   segments or ask about billing limits; just run it.
 3. Report the number, the measure you used, and quote its `#` comment.
 4. If no measure answers the question, say so and propose one as a change to
    `fees.malloy`. Do not invent it in a query.
+
+## Dates
+
+- `to` EXCLUDES its end date. Never write a range that ends on the last day
+  you want.
+- For a whole day, month, quarter or year, use one literal with `?`, no range:
+
+      closed_at ? @2026-08-15     -- that day
+      closed_at ? @2026-08        -- all of August
+      closed_at ? @2026-Q3        -- July through September
+      closed_at ? @2026           -- the whole year
+
+- For any other span, end on the day AFTER the last day you want:
+
+      Aug 10 through Aug 20  ->  closed_at ? @2026-08-10 to @2026-08-21
 
 ## What not to do
 
