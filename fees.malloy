@@ -20,7 +20,12 @@ source: operations is bigquery.table('crypto-stellar.crypto_stellar_dbt.enriched
     # Network fees in XLM. fee_charged is the TRANSACTION fee repeated on every
     # operation row, so each row carries its share (fee / ops in the txn).
     # Failed transactions still pay. Stroops -> XLM is / 10,000,000.
+    # Not max_fee: that's the bid, not what was paid.
     fees_xlm is sum(fee_charged / txn_operation_count) / 10000000
+
+    # Fees paid by FAILED transactions. They still pay; this is why fees_xlm
+    # never filters to successful.
+    failed_fees_xlm is fees_xlm { where: not successful }
 
     # Distinct transactions. count() would count operation rows instead.
     txn_count is count(transaction_hash)
@@ -55,4 +60,9 @@ query: fees_august_15 is operations -> {
 
 query: daily_fees_week is operations -> daily_fees + {
   where: closed_at ? @2026-08-01 to @2026-08-08  // Aug 1-7; `to` excludes Aug 8
+}
+
+query: failed_fees_august_15 is operations -> {
+  where: closed_at ? @2026-08-15
+  aggregate: fees_xlm, failed_fees_xlm
 }

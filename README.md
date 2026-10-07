@@ -20,7 +20,7 @@ exactly twice too high, formatted nicely, with no error.
 
 | File | What it is |
 |---|---|
-| `fees.malloy` | The semantic layer. One source, four measures, two views, two named queries. The comments are the guidance an LLM reads. |
+| `fees.malloy` | The semantic layer. One source, five measures, two views, three named queries. The comments are the guidance an LLM reads. |
 | `run_malloy.py` | Runs one Malloy query on BigQuery and prints rows plus the generated SQL. What the agent calls. |
 | `AGENTS.md` | The guidance layer. Read by Cursor, Copilot and Codex directly, and by Claude Code through `CLAUDE.md`. |
 
@@ -68,7 +68,7 @@ table, same question. The only difference is what it was told to use.
 - **No evals.** A prompt set and a judge that grade the agent's answers
   against known numbers. That is the step that catches drift.
 - **No USD.** There is no public XLM price table, so fees stay in XLM.
-- **No scale.** One table, four measures. A real warehouse has hundreds of
+- **No scale.** One table, five measures. A real warehouse has hundreds of
   tables and the same problem on every one.
 
 ## Credits

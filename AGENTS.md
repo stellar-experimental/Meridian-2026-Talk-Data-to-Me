@@ -5,11 +5,19 @@ Read it before answering any question about fees, transactions, or operations.
 Claude Code reads this file through `CLAUDE.md`; Cursor, Copilot and Codex
 read it directly; anything else, paste it into the system prompt.
 
+## Picking the right measure
+
+- "Total fees" for any period        -> fees_xlm, one row, no group_by
+- "Fees each day / by type"          -> daily_fees / fees_by_type
+- "Average fee per transaction"      -> fee_per_txn_xlm (never avg(fee_charged))
+- "How much did failed txns pay?"    -> failed_fees_xlm
+- "Transaction count"                -> txn_count, not op_count
+
 ## How to answer a fee question
 
 1. Find the measure or view in `fees.malloy` that answers it: `fees_xlm`,
-   `txn_count`, `op_count`, `fee_per_txn_xlm`, or the views `daily_fees` and
-   `fees_by_type`. Use them by name. Do not write inline aggregates such as
+   `failed_fees_xlm`, `txn_count`, `op_count`, `fee_per_txn_xlm`, or the views
+   `daily_fees` and `fees_by_type`. Use them by name. Do not write inline aggregates such as
    `sum(fee_charged)`.
 2. Write a Malloy `run:` block and execute it with:
 
