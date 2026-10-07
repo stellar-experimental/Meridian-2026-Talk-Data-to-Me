@@ -53,8 +53,6 @@ query: fees_august_15 is operations -> {
   aggregate: fees_xlm, txn_count, op_count
 }
 
-// One week so it runs from the VS Code extension, which caps BigQuery at
-// 25 GB billed by default. run_malloy.py has no cap; whole months are fine there.
 query: daily_fees_week is operations -> daily_fees + {
   where: closed_at ? @2026-08-01 to @2026-08-08  // Aug 1-7; `to` excludes Aug 8
 }
