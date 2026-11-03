@@ -1,0 +1,51 @@
+// Talk Data to Me, web demo — the same semantic layer as ../fees.malloy, on a
+// daily rollup of enriched_history_operations (2025-10-01 to 2026-09-30).
+//
+// One row per (close_day, type_string, txn_operation_count). fee_charged is the
+// SUM of the per-operation fee column, and that column repeats the
+// TRANSACTION fee on every operation row. Summing it double-counts, exactly as
+// on the raw table. This file says how to count it.
+
+source: operations is duckdb.table('operations_daily') extend {
+
+  dimension:
+    # Operation type, e.g. payment, invoke_host_function, manage_buy_offer.
+    op_type is type_string
+
+  measure:
+    # Network fees in XLM. fee_charged is the TRANSACTION fee repeated on every
+    # operation row, so each row carries its share (fee / ops in the txn).
+    # Failed transactions still pay. Stroops -> XLM is / 10,000,000.
+    fees_xlm is sum(fee_charged / txn_operation_count) / 10000000
+
+    # Transactions. Exact for any set of whole days; split across op types
+    # in proportion to each transaction's operations.
+    txn_count is sum(op_rows / txn_operation_count)
+
+    # Operations. The grain of the original table.
+    op_count is op_rows.sum()
+
+    # Average fee per transaction, in XLM.
+    fee_per_txn_xlm is fees_xlm / txn_count
+
+  # Fees by day.
+  view: daily_fees is {
+    group_by: close_day
+    aggregate: fees_xlm, txn_count, op_count
+    order_by: close_day
+  }
+
+  # Fees by month.
+  view: monthly_fees is {
+    group_by: close_month is close_day.month
+    aggregate: fees_xlm, txn_count, op_count, fee_per_txn_xlm
+    order_by: close_month
+  }
+
+  # Fees split by operation type.
+  view: fees_by_type is {
+    group_by: op_type
+    aggregate: fees_xlm, op_count
+    order_by: fees_xlm desc
+  }
+}
